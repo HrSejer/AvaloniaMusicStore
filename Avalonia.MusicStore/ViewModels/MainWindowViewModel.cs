@@ -1,9 +1,26 @@
-﻿namespace Avalonia.MusicStore.ViewModels
+﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Text;
+using System.Windows.Input;
+using ReactiveUI;
+
+namespace Avalonia.MusicStore.ViewModels
 {
-    public partial class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
     {
-#pragma warning disable CA1822 // Mark members as static
-        public string Greeting => "Welcome to Avalonia!";
-#pragma warning restore CA1822 // Mark members as static
+        public MainWindowViewModel()
+        {
+            ShowDialog = new Interaction<MusicStoreViewModel, AlbumViewModel?>();
+
+            BuyMusicCommand = ReactiveCommand.CreateFromTask(async() =>
+            {
+                var store = new MusicStoreViewModel();
+
+                var result = await ShowDialog.Handle(store);
+            });
+        }
+        public ICommand BuyMusicCommand { get; }
+        public Interaction<MusicStoreViewModel, AlbumViewModel?> ShowDialog { get; }
     }
 }
